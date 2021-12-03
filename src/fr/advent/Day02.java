@@ -9,7 +9,7 @@ public class Day02 {
     public static void main(String[] args) throws IOException {
         var entree = Util.lireEntree("day02.txt", Ligne::new);
 
-        var position = new Position(0, 0);
+        var position = new Position(0, 0, 0);
         for (Ligne ligne : entree) {
             position = StrategieDeplacement.of(ligne.operateur).apply(position, ligne.i);
         }
@@ -18,9 +18,9 @@ public class Day02 {
     }
 
     enum StrategieDeplacement {
-        FORWARD("forward", (pos, i) -> new Position(pos.x + i, pos.y)),//
-        DOWN("down", (pos, i) -> new Position(pos.x, pos.y + i)),//
-        UP("up", (pos, i) -> new Position(pos.x, pos.y - i));
+        FORWARD("forward", (pos, i) -> new Position(pos.aim, pos.x + i, pos.y + (pos.aim * i))),//
+        DOWN("down", (pos, i) -> new Position(pos.aim + i, pos.x, pos.y)),//
+        UP("up", (pos, i) -> new Position(pos.aim - i, pos.x, pos.y));
 
         final String valeur;
         final BiFunction<Position, Integer, Position> operateur;
@@ -45,10 +45,12 @@ public class Day02 {
     static class Position {
         final int x;
         final int y;
+        final int aim;
 
-        Position(final int x, final int y) {
+        Position(final int aim, final int x, final int y) {
             this.x = x;
             this.y = y;
+            this.aim = aim;
         }
     }
 
