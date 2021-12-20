@@ -15,4 +15,8 @@ public class Util {
             .map(transformation)//
             .collect(Collectors.toList());
     }
+
+    public static List<String> lireEntree(String file) throws IOException {
+        return Files.readAllLines(Paths.get("input").resolve(file));
+    }
 }
