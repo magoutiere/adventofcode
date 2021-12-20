@@ -10,7 +10,7 @@ public class Day04 {
     public static final int TAILLE_PLATEAU = 5;
 
     public static void main(String[] args) throws IOException {
-        var entree = Util.lireEntree("day04_exemple.txt");
+        var entree = Util.lireEntree("day04.txt");
 
         var tirages = Arrays.stream(entree.get(0).split(",")).toList();
         var plateaux = lirePlateaux(entree);
@@ -21,12 +21,18 @@ public class Day04 {
     }
 
     private static int recupererScorePlateauGagnant(final List<String> tirages, final List<PlateauBingo> plateaux) {
-        for (String tirage : tirages) {
-            plateaux.forEach(plateauBingo -> plateauBingo.jouer(tirage));
-            var nousAvonsUnBingo = plateaux.stream().filter(PlateauBingo::estGagnant).findAny();
+        PlateauBingo plateauBingoGagnant = null;
 
-            if (nousAvonsUnBingo.isPresent()) {
-                return nousAvonsUnBingo.get().score() * Integer.parseInt(tirage);
+        for (String tirage : tirages) {
+            var plateauxPerdants = plateaux.stream().filter(PlateauBingo::estPerdant).toList();
+            if (plateauxPerdants.size() == 1){
+                plateauBingoGagnant = plateauxPerdants.get(0);
+            }
+
+            plateauxPerdants.forEach(plateauBingo -> plateauBingo.jouer(tirage));
+
+            if (plateaux.stream().noneMatch(PlateauBingo::estPerdant)) {
+                return plateauBingoGagnant.score() * Integer.parseInt(tirage);
             }
         }
         throw new IllegalStateException("Pas de gagnant ?!");
@@ -65,6 +71,10 @@ public class Day04 {
                     mark[i][j] = mark[i][j] || tirage.equals(plateau[i][j]);
                 }
             }
+        }
+
+        public boolean estPerdant(){
+            return !estGagnant();
         }
 
         public boolean estGagnant() {
